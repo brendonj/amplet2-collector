@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+
+import amplet2_collector
+
+if __name__ == "__main__":
+    amplet2_collector.main()
