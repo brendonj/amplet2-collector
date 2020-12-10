@@ -180,6 +180,57 @@ def traceroute(timestamp, source, data):
             hopid += 1
     return points
 
+def throughput(timestamp, source, data):
+    points = []
+    for datum in data["results"]:
+        points.append({
+            "measurement": "throughput",
+            "tags": {
+                "test": "throughput",
+                "source": source,
+                "destination": data["target"],
+                "write_size": data["write_size"],
+                "dscp": data["dscp"],
+                "protocol": data["protocol"],
+                "direction": datum["direction"],
+                "family": get_family(data.get("address", None)),
+            },
+            "time": timestamp,
+            "fields": {
+                # XXX duration vs runtime
+                "duration": datum["duration"],
+                "runtime": datum["runtime"],
+                "bytes": datum["bytes"],
+            }
+        })
+    return points
+
+def udpstream(timestamp, source, data):
+    points = []
+    for datum in data["results"]:
+        points.append({
+            "measurement": "udpstream",
+            "tags": {
+                "test": "udpstream",
+                "source": source,
+                "destination": data["target"],
+                "packet_size": data["packet_size"],
+                "packet_spacing": data["packet_spacing"],
+                "packet_count": data["packet_count"],
+                "dscp": data["dscp"],
+                "direction": datum["direction"],
+                "family": get_family(data.get("address", None)),
+            },
+            "time": timestamp,
+            "fields": {
+                "rtt": datum["rtt"]["mean"],
+                "jitter": datum["jitter"]["mean"],
+                "loss": datum["loss_percent"],
+                "mos": datum["voip"]["itu_mos"],
+            }
+        })
+    return points
+
 class Processor(object):
     def __init__(self, dbhost="localhost", dbport=8086, dbuser=None,
             dbpass=None, dbname="amp"):
@@ -281,6 +332,10 @@ class Processor(object):
                 processed = http(properties.timestamp, properties.user_id, data)
             elif test == "traceroute":
                 processed = traceroute(properties.timestamp, properties.user_id, data)
+            elif test == "throughput":
+                processed = throughput(properties.timestamp, properties.user_id, data)
+            elif test == "udpstream":
+                processed = udpstream(properties.timestamp, properties.user_id, data)
             else:
                 processed = []
             #XXX test specific modules to massage the data?
