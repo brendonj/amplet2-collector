@@ -231,6 +231,102 @@ def udpstream(timestamp, source, data):
         })
     return points
 
+def external(timestamp, source, data):
+    points = []
+    for datum in data["results"]:
+        points.append({
+            "measurement": "external",
+            "tags": {
+                "test": "external",
+                "source": source,
+                "command": data["command"],
+            },
+            "time": timestamp,
+            "fields": {
+                "value": datum["value"]
+            }
+        })
+    return points
+
+def fastping(timestamp, source, data):
+    points = []
+    for datum in data["results"]:
+        points.append({
+            # XXX this has a different set of fields to latency, but is very
+            # similar to udpstream... put them in the same table?
+            "measurement": "fastping",
+            "tags": {
+                "test": "fastping",
+                "source": source,
+                "destination": data["destination"],
+                "packet_rate": data["packet_rate"],
+                "packet_size": data["packet_size"],
+                "packet_count": data["packet_count"],
+                "dscp": data["dscp"],
+                "family": get_family(data.get("address", None)),
+            },
+            "time": timestamp,
+            "fields": {
+                "response_time": datum["time_till_first_response"],
+                "connect_time": datum["time_till_connected"],
+                "duration": datum["runtime"],
+                "rtt": datum["rtt"]["mean"],
+                "jitter": datum["jitter"]["mean"],
+            }
+        })
+    return points
+
+def sip(timestamp, source, data):
+    points = []
+    for datum in data["results"]:
+        points.append({
+            "measurement": "sip",
+            "tags": {
+                "test": "sip",
+                "source": source,
+                "destination": data["hostname"],
+                "uri": data["uri"],
+                "dscp": data["dscp"],
+                "family": get_family(data.get("address", None)),
+            },
+            "time": timestamp,
+            "fields": {
+                "response_time": datum["time_till_first_response"],
+                "connect_time": datum["time_till_connected"],
+                "duration": datum["duration"],
+                "rtt": datum["rtt"]["mean"],
+                "tx_mos": datum["tx"]["itu_mos"],
+                "tx_jitter": datum["tx"]["jitter"]["mean"],
+                "tx_loss_percent": 100.0 * datum["tx"]["lost"] / (datum["tx"]["packets"] + datum["tx"]["lost"]),
+                "rx_mos": datum["rx"]["itu_mos"],
+                "rx_jitter": datum["rx"]["jitter"]["mean"],
+                "rx_loss_percent": 100.0 * datum["rx"]["lost"] / (datum["rx"]["packets"] + datum["rx"]["lost"])
+            }
+        })
+    return points
+
+def youtube(timestamp, source, data):
+    points = []
+    points.append({
+        "measurement": "video",
+        "tags": {
+            "test": "youtube",
+            "source": source,
+            "destination": data["video"],
+            "requested_quality": data["requested_quality"],
+        },
+        "time": timestamp,
+        "fields": {
+            "actual_quality": data["actual_quality"],
+            "pre_time": data["pre_time"],
+            "initial_buffering": data["initial_buffering"],
+            "playing_time": data["playing_time"],
+            "stall_time": data["stall_time"],
+            "stall_count": data["stall_count"],
+        }
+    })
+    return points
+
 class Processor(object):
     def __init__(self, dbhost="localhost", dbport=8086, dbuser=None,
             dbpass=None, dbname="amp"):
@@ -336,6 +432,14 @@ class Processor(object):
                 processed = throughput(properties.timestamp, properties.user_id, data)
             elif test == "udpstream":
                 processed = udpstream(properties.timestamp, properties.user_id, data)
+            elif test == "external":
+                processed = external(properties.timestamp, properties.user_id, data)
+            elif test == "fastping":
+                processed = fastping(properties.timestamp, properties.user_id, data)
+            elif test == "sip":
+                processed = sip(properties.timestamp, properties.user_id, data)
+            elif test == "youtube":
+                processed = youtube(properties.timestamp, properties.user_id, data)
             else:
                 processed = []
             #XXX test specific modules to massage the data?
