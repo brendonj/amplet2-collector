@@ -9,5 +9,5 @@ setup(name='amplet2-collector',
         url='https://amp.wand.net.nz',
         packages=['amplet2_collector','amplet2_collector.tests'],
         scripts=['bin/amplet2-collector'],
-        install_requires=['pika', 'influxdb','ampsave'],
+        install_requires=['pika', 'influxdb', 'ampsave', 'daemon'],
      )

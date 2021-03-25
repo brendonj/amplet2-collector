@@ -10,6 +10,8 @@ import logging.handlers
 import os
 import sys
 
+import daemon
+import daemon.pidfile
 import pika
 
 from .processor import Processor
@@ -38,6 +40,20 @@ def main():
             const=logging.DEBUG)
     args = parser.parse_args()
 
+    if args.daemonise:
+        context = daemon.DaemonContext(
+                detach_process=True,
+                pidfile=daemon.pidfile.TimeoutPIDLockFile(args.pidfile),
+                stderr=sys.stderr,
+                stdout=sys.stdout
+        )
+        with context:
+            run(args)
+    else:
+        run(args)
+
+
+def run(args):
     # create our own logger, otherwise adjusting log levels causes all the
     # other loggers (e.g. pika) to adjust as well
     logger = logging.getLogger("amplet2_collector")
