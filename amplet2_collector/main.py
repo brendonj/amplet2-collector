@@ -6,6 +6,7 @@
 
 import argparse
 import logging
+import logging.handlers
 import os
 import sys
 
@@ -45,7 +46,7 @@ def main():
 
     if args.daemonise:
         #logging.basicConfig(filename=args.logfile, level=args.loglevel)
-        handler = logging.WatchedFileHandler(filename=args.logfile)
+        handler = logging.handlers.WatchedFileHandler(filename=args.logfile)
     else:
         #logging.basicConfig(level=args.loglevel)
         handler = logging.StreamHandler()
