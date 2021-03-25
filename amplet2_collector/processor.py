@@ -23,6 +23,9 @@ class Processor(object):
         self._dbname = dbname
         self._db = None
         self._maximum_backoff = 64
+        self._batch_size = 100
+        self._pending = []
+        self._count = 0
         self._connect()
 
     def __del__(self):
@@ -57,7 +60,9 @@ class Processor(object):
         # XXX does this actually throw an exception? or will just return false?
         while True:
             try:
-                if self._db.write_points(points, time_precision="s"):
+                # XXX try using line protocol (is json default?)
+                if self._db.write_points(points, batch_size=10000,
+                                         time_precision="s"):
                     break
                 self._logger.warning("Failed to write to influxdb")
                 self._db = None
@@ -99,15 +104,32 @@ class Processor(object):
                         test, properties.user_id, err)
             data = None
 
-        # write any data to influxdb, for now one message at a time
-        if data:
-            try:
-                processed = getattr(tests, test).process(
-                        properties.timestamp, properties.user_id, data)
-            except AttributeError:
-                self._logger.warning("Can't process unknown test: '%s'", test)
-                processed = []
-            self._write(processed)
+        # if the incoming messages are really bad then I guess this could
+        # affect how often results get written, but why is the data that bad?
+        if data is None:
+            return
 
-        # acknowledge message
-        channel.basic_ack(method.delivery_tag)
+        try:
+            # process the message using test specific code into a list of
+            # datapoints appropriate to insert into influxdb
+            self._pending += getattr(tests, test).process(
+                    properties.timestamp, properties.user_id, data)
+        except AttributeError:
+            self._logger.warning("Can't process unknown test: '%s'", test)
+
+        # count messages rather than using the number of pending results
+        # (some tests can report one result, others hundreds and this gives
+        # a bit more consistency to the processing delay)
+        self._count += 1
+
+        if self._count < self._batch_size:
+            return
+
+        # write all pending data to influxdb and reset the accumulator
+        self._write(self._pending)
+        self._pending = []
+        self._count = 0
+
+        # don't ack anything until we write the whole block of pending results,
+        # as sending individual acks can be slow
+        channel.basic_ack(method.delivery_tag, True)
