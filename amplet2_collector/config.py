@@ -6,7 +6,7 @@ def parse_config(filename):
     logger = logging.getLogger(__name__)
     logger.debug("Loading configuration from '%s'", filename)
 
-    config = configparser.SafeConfigParser()
+    config = configparser.ConfigParser()
 
     try:
         config.read_file(open(filename))
