@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-# TODO proper logging
-# TODO daemonise
-# TODO modules to save each type of data?
-# TODO makefile vs just a setup.py
+# TODO make batch size configurable
 
 import argparse
 import logging
@@ -61,14 +58,11 @@ def run(args):
     logger.setLevel(args.loglevel)
 
     if args.daemonise:
-        #logging.basicConfig(filename=args.logfile, level=args.loglevel)
         handler = logging.handlers.WatchedFileHandler(filename=args.logfile)
     else:
-        #logging.basicConfig(level=args.loglevel)
         handler = logging.StreamHandler()
 
     formatter = logging.Formatter(
-            #"[%(asctime)s] [%(levelname)s:%(name)s] %(message)s")
             "[%(asctime)s] %(levelname)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
@@ -85,6 +79,7 @@ def run(args):
     dbuser = config.get("influxdb", "username", fallback="guest")
     dbpass = config.get("influxdb", "password", fallback="guest")
     dbname = config.get("influxdb", "database", fallback="amp")
+
     processor = Processor(dbhost, dbport, dbuser, dbpass, dbname)
 
     # connect to the message queue
@@ -94,12 +89,11 @@ def run(args):
     amqp_port = config.getint("rabbitmq", "port", fallback=5672)
     amqp_queue = config.get("rabbitmq", "queue", fallback="ampqueue")
 
+    # XXX what happens if rabbitmq goes away while we are connected?
     amqp_credentials = pika.PlainCredentials(amqp_user, amqp_pass)
     amqp_connection = pika.BlockingConnection(pika.ConnectionParameters(
                 host=amqp_host, port=amqp_port, credentials=amqp_credentials))
     amqp_channel = amqp_connection.channel()
-    # XXX these args are switched in newer pika?
-    #amqp_channel.basic_consume(processor.process_data, queue=amqp_queue)
     amqp_channel.basic_consume(queue=amqp_queue, on_message_callback=processor.process_data)
     amqp_channel.start_consuming()
 

@@ -32,8 +32,6 @@ class Processor(object):
         if self._db:
             self._db.close()
 
-    # XXX this doesn't actually connect until a request is made?
-    # XXX do some testing once I have requests to send
     def _connect(self):
         delay = 1
         while self._db is None:
@@ -43,7 +41,6 @@ class Processor(object):
                 self._db = InfluxDBClient(self._dbhost, self._dbport,
                         self._dbuser, self._dbpass, self._dbname)
             except ConnectionError as err:
-                # XXX which exceptions?
                 self._logger.warning("Failed to connect to influxdb %s:%d: %s",
                             self._dbhost, self._dbport, err)
                 self._db = None
@@ -57,7 +54,6 @@ class Processor(object):
         if not points:
             return
 
-        # XXX does this actually throw an exception? or will just return false?
         while True:
             try:
                 # XXX try using line protocol (is json default?)
@@ -99,7 +95,7 @@ class Processor(object):
             self._logger.warning("Can't decode unknown test: '%s'", test)
             data = None
         except DecodeError as err:
-            # Protocol buffer decoding failed for some reason
+            # protocol buffer decoding failed for some reason
             self._logger.warning("Failed to decode %s result from %s: %s",
                         test, properties.user_id, err)
             data = None
