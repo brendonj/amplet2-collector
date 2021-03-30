@@ -9,4 +9,5 @@ setup(name='amplet2-collector',
         packages=find_packages(),
         scripts=['bin/amplet2-collector'],
         install_requires=['pika', 'influxdb', 'ampsave', 'daemon'],
+        python_requires='>=3',
      )
