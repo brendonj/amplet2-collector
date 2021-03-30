@@ -1,0 +1,50 @@
+.TH AMPLET2-COLLECTOR 8 "2021-03-29" "amplet2-collector" "The Active Measurement Project"
+
+.SH NAME
+amplet2-collector \- AMP collector
+
+
+.SH SYNOPSIS
+\fBamplet2-collector\fR [\fB-dhv\fR] [\fB-c \fIconfigfile\fR] [\fB-l \fIlogfile\fR] [\fB-p \fIpidfile\fR]
+
+
+.SH DESCRIPTION
+\fBamplet2-collector\fP reads AMP network measurement messages from a rabbitmq
+queue, transforms them slightly for better storage/searching/display, then
+writes them to an influx database for subsequent analysis.
+
+
+.SH OPTIONS
+.TP
+\fB-h, --help\fR
+Show summary of options.
+
+.TP
+\fB-c, --config \fIconfigfile\fR
+Read configuration information from the file \fIconfigfile\fR.
+The default configuration file is /etc/amplet2/collector.conf.
+
+.TP
+\fB-d, --daemonise\fR
+Run as a daemon in the background.
+
+.TP
+\fB-l, --logfile \fIlogfile\fR
+When run as a daemon, write program logs to the file \fIlogfile\fR.
+The default log file is /var/log/amplet2/collector.log.
+
+.TP
+\fB-p, --pidfile \fIpidfile\fR
+When run as a daemon, write the program PID to the file \fIpidfile\fR.
+The default pid file is /var/run/amplet2/collector.pid.
+
+.TP
+\fB-v, --verbose\fR
+Enable verbose logging.
+
+
+.SH AUTHOR
+amplet2-collector was written by Brendon Jones <brendonj@waikato.ac.nz>.
+
+.PP
+This manual page was written by Brendon Jones <brendonj@waikato.ac.nz>.
