@@ -1,5 +1,4 @@
-#from distutils.core import setup
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='amplet2-collector',
         version='1.0',
@@ -7,7 +6,7 @@ setup(name='amplet2-collector',
         author='Brendon Jones',
         author_email='brendonj@waikato.ac.nz',
         url='https://amp.wand.net.nz',
-        packages=['amplet2_collector','amplet2_collector.tests'],
+        packages=find_packages(),
         scripts=['bin/amplet2-collector'],
         install_requires=['pika', 'influxdb', 'ampsave', 'daemon'],
      )
