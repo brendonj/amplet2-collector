@@ -1,0 +1,17 @@
+Source: amplet2-collector
+Section: net
+Priority: optional
+Maintainer: Brendon Jones <brendonj@waikato.ac.nz>
+Build-Depends: debhelper (>= 8.0.0), dh-systemd, dh-python, python3-all, python3-pkg-resources, python3-setuptools
+Standards-Version: 3.9.6
+Homepage: https://amp.wand.net.nz
+#Vcs-Git: https://github.com/wanduow/amplet2-collector.git
+#Vcs-Browser: https://github.com/wanduow/amplet2-collector
+
+Package: amplet2-collector
+Architecture: all
+Conflicts: amplet2-server, nntsc
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}, influxdb (>= 1.0.2), influxdb-client, rabbitmq-server (>= 3.1.5), python3-ampsave, python3-influxdb (>= 2.12.0), python3-daemon, python3-pika, adduser
+Description: Collects and stores network time series data from amplet2-client
+ The amplet2-collector stores network time series data in influxdb for
+ exploration and display using grafana.

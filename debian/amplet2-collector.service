@@ -1,0 +1,18 @@
+[Unit]
+Description=AMP collector
+After=network.target rabbitmq-server.service
+Wants=rabbitmq-server.service
+
+[Service]
+User=cuz
+Group=cuz
+Type=forking
+ExecStart=/usr/sbin/amplet2-collector -d
+Restart=on-failure
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=yes
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
