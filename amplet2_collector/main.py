@@ -89,12 +89,18 @@ def run(args):
     amqp_port = config.getint("rabbitmq", "port", fallback=5672)
     amqp_queue = config.get("rabbitmq", "queue", fallback="ampqueue")
 
+    logger.info("Connecting to rabbitmq server %s:%d", amqp_host, amqp_port)
+
     # XXX what happens if rabbitmq goes away while we are connected?
     amqp_credentials = pika.PlainCredentials(amqp_user, amqp_pass)
     amqp_connection = pika.BlockingConnection(pika.ConnectionParameters(
                 host=amqp_host, port=amqp_port, credentials=amqp_credentials))
+
+    logger.info("Connected to rabbitmq server %s:%d", amqp_host, amqp_port)
+
     amqp_channel = amqp_connection.channel()
     amqp_channel.basic_consume(queue=amqp_queue, on_message_callback=processor.process_data)
+    logger.info("Consuming from rabbitmq queue '%s'", amqp_queue)
     amqp_channel.start_consuming()
 
 
