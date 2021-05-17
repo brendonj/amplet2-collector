@@ -98,8 +98,18 @@ def run(args):
 
     logger.info("Connected to rabbitmq server %s:%d", amqp_host, amqp_port)
 
+    # the function signature was changed around version 1.0.0, but
+    # Debian/Ubuntu don't appear to have caught up yet. Try the old one first.
     amqp_channel = amqp_connection.channel()
-    amqp_channel.basic_consume(queue=amqp_queue, on_message_callback=processor.process_data)
+    try:
+        amqp_channel.basic_consume(
+                consumer_callback=processor.process_data,
+                queue=amqp_queue)
+    except TypeError:
+        amqp_channel.basic_consume(
+                queue=amqp_queue,
+                on_message_callback=processor.process_data)
+
     logger.info("Consuming from rabbitmq queue '%s'", amqp_queue)
     amqp_channel.start_consuming()
 
