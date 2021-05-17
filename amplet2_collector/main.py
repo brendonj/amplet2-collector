@@ -111,7 +111,13 @@ def run(args):
                 on_message_callback=processor.process_data)
 
     logger.info("Consuming from rabbitmq queue '%s'", amqp_queue)
-    amqp_channel.start_consuming()
+    try:
+        amqp_channel.start_consuming()
+    except SystemExit:
+        logger.info("Stopping amplet2 collector")
+        amqp_channel.stop_consuming()
+
+    amqp_connection.close()
 
 
 if __name__ == "__main__":
