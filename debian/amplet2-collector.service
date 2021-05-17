@@ -13,6 +13,7 @@ PrivateTmp=yes
 PrivateDevices=yes
 ProtectSystem=yes
 ProtectHome=yes
+PIDFile=/var/run/amplet2/collector.pid
 
 [Install]
 WantedBy=multi-user.target
