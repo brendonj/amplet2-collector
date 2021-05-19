@@ -59,6 +59,10 @@ def run(args):
 
     if args.daemonise:
         handler = logging.handlers.WatchedFileHandler(filename=args.logfile)
+        if not os.path.exists(os.path.dirname(args.logfile)):
+            os.mkdir(os.path.dirname(args.logfile))
+        if not os.path.exists(os.path.dirname(args.pidfile)):
+            os.mkdir(os.path.dirname(args.pidfile))
     else:
         handler = logging.StreamHandler()
 

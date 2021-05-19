@@ -73,6 +73,15 @@ case "$1" in
             adduser --quiet --system --group --no-create-home --home /etc/ampweb ampweb
         fi
 
+        LOGDIR=/var/log/ampweb
+        RUNDIR=/var/run/ampweb
+
+        mkdir -p ${LOGDIR}
+        chown ampweb:ampweb ${LOGDIR}
+
+        mkdir -p ${RUNDIR}
+        chown ampweb:ampweb ${RUNDIR}
+
         # TODO do we need an influx user?
         # create the influx database, this should be idempotent
         influx -execute 'CREATE DATABASE amp'
