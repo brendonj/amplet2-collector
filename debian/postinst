@@ -85,6 +85,7 @@ case "$1" in
         # TODO do we need an influx user?
         # create the influx database, this should be idempotent
         influx -execute 'CREATE DATABASE amp'
+        influx -execute 'CREATE RETENTION POLICY grafana ON amp DURATION 365d REPLICATION 1 DEFAULT' || true
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
