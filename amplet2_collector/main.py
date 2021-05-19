@@ -19,16 +19,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config",
             help="Config file location",
-            default="/etc/amplet2/collector.conf")
+            default="/etc/ampweb/collector.conf")
     parser.add_argument("-d", "--daemonise",
             help="Run as a daemon in the background",
             action="store_true")
     parser.add_argument("-l", "--logfile",
             help="Log file location (if running backgrounded)",
-            default="/var/log/amplet2/collector.log")
+            default="/var/log/ampweb/collector.log")
     parser.add_argument("-p", "--pidfile",
             help="PID file location (if running backgrounded)",
-            default="/var/run/amplet2/collector.pid")
+            default="/var/run/ampweb/collector.pid")
     parser.add_argument("-v", "--verbose",
             help="Verbose log output",
             action="store_const",

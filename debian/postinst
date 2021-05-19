@@ -69,8 +69,8 @@ case "$1" in
         # TODO what should the user be called?
         # TODO should this and amplet2-client share a directory?
         # ensure the amplet system user exists
-        if ! getent passwd amplet > /dev/null; then
-            adduser --quiet --system --group --no-create-home --home /etc/amplet2 amplet
+        if ! getent passwd ampweb > /dev/null; then
+            adduser --quiet --system --group --no-create-home --home /etc/ampweb ampweb
         fi
 
         # TODO do we need an influx user?

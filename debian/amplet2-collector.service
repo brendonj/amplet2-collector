@@ -4,8 +4,8 @@ After=network.target rabbitmq-server.service
 Wants=rabbitmq-server.service
 
 [Service]
-User=cuz
-Group=cuz
+User=ampweb
+Group=ampweb
 Type=forking
 ExecStart=/usr/bin/amplet2-collector -d
 Restart=on-failure
@@ -13,7 +13,7 @@ PrivateTmp=yes
 PrivateDevices=yes
 ProtectSystem=yes
 ProtectHome=yes
-PIDFile=/var/run/amplet2/collector.pid
+PIDFile=/var/run/ampweb/collector.pid
 
 [Install]
 WantedBy=multi-user.target
