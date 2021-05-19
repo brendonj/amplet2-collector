@@ -24,6 +24,7 @@ class _Udpstream(processor.Processor):
                     "jitter": datum["jitter"]["mean"],
                     "loss": datum["loss_percent"],
                     "mos": datum["voip"]["itu_mos"],
+                    "count": 1 if datum["rtt"] is not None else 0,
                 }
             })
         return points

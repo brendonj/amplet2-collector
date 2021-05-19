@@ -23,6 +23,7 @@ class _Throughput(processor.Processor):
                     "duration": datum["duration"],
                     "runtime": datum["runtime"],
                     "bytes": datum["bytes"],
+                    "count": 1 if self._is_valid(datum["bytes"]) else 0,
                 }
             })
         return points

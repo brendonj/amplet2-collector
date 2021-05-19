@@ -20,6 +20,7 @@ class _Youtube(processor.Processor):
                 "playing_time": data["playing_time"],
                 "stall_time": data["stall_time"],
                 "stall_count": data["stall_count"],
+                "count": 1 if self._is_valid(data["playing_time"]) else 0,
             }
         })
         return points

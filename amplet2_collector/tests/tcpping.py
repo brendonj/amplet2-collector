@@ -26,6 +26,7 @@ class _Tcpping(processor.Processor):
                     #"family": "ipv4" if "." in datum["address"] else "ipv6",
                     "icmptype": datum["icmptype"],
                     "icmpcode": datum["icmpcode"],
+                    "count": 1 if self._is_valid(datum["rtt"]) else 0,
                 }
             })
         return points

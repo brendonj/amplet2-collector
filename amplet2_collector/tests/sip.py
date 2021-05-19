@@ -26,7 +26,8 @@ class _Sip(processor.Processor):
                     "tx_loss_percent": 100.0 * datum["tx"]["lost"] / (datum["tx"]["packets"] + datum["tx"]["lost"]),
                     "rx_mos": datum["rx"]["itu_mos"],
                     "rx_jitter": datum["rx"]["jitter"]["mean"],
-                    "rx_loss_percent": 100.0 * datum["rx"]["lost"] / (datum["rx"]["packets"] + datum["rx"]["lost"])
+                    "rx_loss_percent": 100.0 * datum["rx"]["lost"] / (datum["rx"]["packets"] + datum["rx"]["lost"]),
+                    "count": 1 if self._is_valid(datum["time_till_first_response"]) else 0,
                 }
             })
         return points

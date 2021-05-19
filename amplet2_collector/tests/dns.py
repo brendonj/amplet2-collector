@@ -5,18 +5,6 @@ class _Dns(processor.Processor):
     def process(self, timestamp, source, data):
         points = []
         for datum in data["results"]:
-            if datum["query_len"] is not None and datum["query_len"] > 0:
-            #if datum.get("query_len", 0) > 0:
-                #response = datum.get("response_size")
-                #if response != None and response > 0:
-                requests = 1
-                if datum["response_size"] is not None and datum["response_size"] > 0:
-                    loss = 0
-                else:
-                    loss = 1
-            else:
-                requests = 0
-                loss = None
             points.append({
                 "measurement": "latency",
                 "tags": {
@@ -30,8 +18,8 @@ class _Dns(processor.Processor):
                 "time": timestamp,
                 "fields": {
                     "rtt": datum["rtt"],
-                    "loss": loss,
-                    "requests": requests,
+                    "loss": None if not self._is_valid(datum["query_len"]) else 0 if self._is_valid(datum["response_size"]) else 1,
+                    "count": 1 if self._is_valid(datum["rtt"]) else 0,
                     # TODO record address family properly
                     #"family": datum["family"],
                     #"family": "ipv4" if "." in datum["address"] else "ipv6",

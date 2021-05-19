@@ -21,11 +21,10 @@ class _Fastping(processor.Processor):
                 },
                 "time": timestamp,
                 "fields": {
-                    "response_time": datum["time_till_first_response"],
-                    "connect_time": datum["time_till_connected"],
-                    "duration": datum["runtime"],
                     "rtt": datum["rtt"]["mean"],
                     "jitter": datum["jitter"]["mean"],
+                    "loss_percent": 100.0 * (1 - (datum["rtt"]["samples"] / data["packet_count"])),
+                    "count": 1 if datum["rtt"] is not None else 0,
                 }
             })
         return points

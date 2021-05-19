@@ -13,3 +13,8 @@ class Processor(object):
         if ":" in address:
             return "ipv6"
         return None
+
+    def _is_valid(self, field):
+        if field is not None and field > 0:
+            return True
+        return False

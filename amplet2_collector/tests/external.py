@@ -14,7 +14,8 @@ class _External(processor.Processor):
                 },
                 "time": timestamp,
                 "fields": {
-                    "value": datum["value"]
+                    "value": datum["value"],
+                    "count": 1,
                 }
             })
         return points

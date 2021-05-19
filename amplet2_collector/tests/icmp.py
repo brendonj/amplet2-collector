@@ -20,12 +20,10 @@ class _Icmp(processor.Processor):
                 "fields": {
                     "rtt": datum["rtt"],
                     "loss": datum["loss"],
-                    # TODO record address family properly
                     # TODO record address as well?
-                    #"family": datum["family"],
-                    #"family": "ipv4" if "." in datum["address"] else "ipv6",
                     "error_type": datum["error_type"],
                     "error_code": datum["error_code"],
+                    "count": 1 if self._is_valid(datum["rtt"]) else 0,
                 }
             })
         return points

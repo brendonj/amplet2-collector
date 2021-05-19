@@ -20,6 +20,7 @@ class _Http(processor.Processor):
                 "object_count": data["object_count"],
                 "duration": data["duration"],
                 "bytes": data["bytes"],
+                "count": 1,
             }
         })
         return points
