@@ -10,7 +10,8 @@ Homepage: https://amp.wand.net.nz
 
 Package: amplet2-collector
 Architecture: all
-Conflicts: amplet2-server, nntsc
+# TODO figure out how these should interact
+#Conflicts: amplet2-server, nntsc
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}, influxdb (>= 1.0.2), influxdb-client, rabbitmq-server (>= 3.1.5), python3-ampsave, python3-influxdb (>= 2.12.0), python3-daemon, python3-pika, adduser
 Description: Collects and stores network time series data from amplet2-client
  The amplet2-collector stores network time series data in influxdb for
