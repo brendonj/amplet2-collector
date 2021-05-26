@@ -1,3 +1,10 @@
+amplet2-collector (1.1.0-1) unstable; urgency=medium
+
+  * Fix accessing data fields to deal with missing data.
+  * Only close database connection if close function exists.
+
+ -- Brendon Jones <brendonj@waikato.ac.nz>  Mon, 24 May 2021 17:28:46 +1200
+
 amplet2-collector (1.0.0-2) unstable; urgency=medium
 
   * Temporarily remove dependency on influxdb-client for testing on hosts
