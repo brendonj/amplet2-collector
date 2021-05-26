@@ -30,7 +30,10 @@ class Processor(object):
 
     def __del__(self):
         if self._db:
-            self._db.close()
+            try:
+                self._db.close()
+            except AttributeError:
+                pass
 
     def _connect(self):
         delay = 1
