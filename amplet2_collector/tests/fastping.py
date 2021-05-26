@@ -5,6 +5,11 @@ class _Fastping(processor.Processor):
     def process(self, timestamp, source, data):
         points = []
         for datum in data["results"]:
+            samples = self._get_nested_value(datum, "rtt", "samples")
+            if samples is None:
+                loss_percent = None
+            else:
+                loss_percent = 100.0 * (1 - (samples / data["packet_count"]))
             points.append({
                 # XXX this has a different set of fields to latency, but is very
                 # similar to udpstream... put them in the same table?
@@ -21,9 +26,9 @@ class _Fastping(processor.Processor):
                 },
                 "time": timestamp,
                 "fields": {
-                    "rtt": datum["rtt"]["mean"],
-                    "jitter": datum["jitter"]["mean"],
-                    "loss_percent": 100.0 * (1 - (datum["rtt"]["samples"] / data["packet_count"])),
+                    "rtt": self._get_nested_value(datum, "rtt", "mean"),
+                    "jitter": self._get_nested_value(datum, "jitter", "mean"),
+                    "loss_percent": loss_percent,
                     "count": 1 if datum["rtt"] is not None else 0,
                 }
             })

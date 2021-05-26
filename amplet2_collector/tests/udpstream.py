@@ -20,10 +20,10 @@ class _Udpstream(processor.Processor):
                 },
                 "time": timestamp,
                 "fields": {
-                    "rtt": datum["rtt"]["mean"],
-                    "jitter": datum["jitter"]["mean"],
+                    "rtt": self._get_nested_value(datum, "rtt", "mean"),
+                    "jitter": self._get_nested_value(datum, "jitter", "mean"),
                     "loss": datum["loss_percent"],
-                    "mos": datum["voip"]["itu_mos"],
+                    "mos": self._get_nested_value(datum, "voip", "itu_mos"),
                     "count": 1 if datum["rtt"] is not None else 0,
                 }
             })

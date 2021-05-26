@@ -18,3 +18,11 @@ class Processor(object):
         if field is not None and field > 0:
             return True
         return False
+
+    def _get_nested_value(self, d, *args):
+        for key in args:
+            try:
+                d = d[key]
+            except (KeyError, TypeError):
+                return None
+        return d

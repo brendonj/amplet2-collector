@@ -2,6 +2,19 @@ from . import processor
 
 class _Sip(processor.Processor):
     """Process AMP sip test data for storing in influxdb."""
+    def _get_loss_percent(self, datum):
+        if datum is None:
+            return None
+
+        lost = datum.get("lost")
+        packets = datum.get("packets")
+
+        if self._is_valid(lost) and self._is_valid(packets):
+            return 100.0 * lost / (lost + packets)
+
+        return None
+
+
     def process(self, timestamp, source, data):
         points = []
         for datum in data["results"]:
@@ -20,13 +33,13 @@ class _Sip(processor.Processor):
                     "response_time": datum["time_till_first_response"],
                     "connect_time": datum["time_till_connected"],
                     "duration": datum["duration"],
-                    "rtt": datum["rtt"]["mean"],
-                    "tx_mos": datum["tx"]["itu_mos"],
-                    "tx_jitter": datum["tx"]["jitter"]["mean"],
-                    "tx_loss_percent": 100.0 * datum["tx"]["lost"] / (datum["tx"]["packets"] + datum["tx"]["lost"]),
-                    "rx_mos": datum["rx"]["itu_mos"],
-                    "rx_jitter": datum["rx"]["jitter"]["mean"],
-                    "rx_loss_percent": 100.0 * datum["rx"]["lost"] / (datum["rx"]["packets"] + datum["rx"]["lost"]),
+                    "rtt": self._get_nested_value(datum, "rtt", "mean"),
+                    "tx_mos": self._get_nested_value(datum, "tx", "itu_mos"),
+                    "tx_jitter": self._get_nested_value(datum, "tx", "jitter", "mean"),
+                    "tx_loss_percent": self._get_loss_percent(datum.get("tx")),
+                    "rx_mos": self._get_nested_value(datum, "rx", "itu_mos"),
+                    "rx_jitter": self._get_nested_value(datum, "rx", "jitter", "mean"),
+                    "rx_loss_percent": self._get_loss_percent(datum.get("rx")),
                     "count": 1 if self._is_valid(datum["time_till_first_response"]) else 0,
                 }
             })
