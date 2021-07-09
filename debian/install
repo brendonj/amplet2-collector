@@ -1,1 +1,2 @@
 collector.conf etc/ampweb/
+meta.sql usr/share/amplet2-collector/

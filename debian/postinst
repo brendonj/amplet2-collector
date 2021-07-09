@@ -17,6 +17,28 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+table_exists()
+{
+    if [ $# -ne 2 ]; then
+        echo "table_exists() expects 2 arguments, $# given"
+        exit 1
+    fi
+
+    su postgres -c "psql -d $1 -tAc \
+        \"SELECT 1 FROM information_schema.tables \
+        WHERE table_name='$2'\" | grep -q 1"
+}
+
+grant_permissions()
+{
+    if [ $# -ne 3 ]; then
+        echo "grant_permissions() expects 3 arguments, $# given"
+        exit 1
+    fi
+
+    su postgres -c "psql -d $1 -q -c \
+        \"GRANT SELECT ON TABLE $2 TO \\\"$3\\\";\" || true"
+}
 
 case "$1" in
     configure)
@@ -77,6 +99,38 @@ case "$1" in
         # create the influx database, this should be idempotent
         influx -execute 'CREATE DATABASE amp'
         influx -execute 'CREATE RETENTION POLICY grafana ON amp DURATION 365d REPLICATION 1 DEFAULT' || true
+
+        # create the postgres database user if required
+        su postgres -c "psql -tAc \"SELECT 1 FROM pg_roles WHERE rolname='ampweb'\" | grep -q 1 || createuser --no-createdb --no-createrole --no-superuser ampweb"
+
+        # check if the database exists, it might exist from other amp packages
+        if su postgres -c "psql --list | cut -d ' ' -f 2 | grep -qx ampmeta"; then
+
+            # if it already exists check if it has the new views
+            if ! table_exists ampmeta sources; then
+                su postgres -c "psql -d ampmeta -q -c           \
+                    \"CREATE VIEW sources AS SELECT             \
+                    member.member_ampname                       \
+                    FROM member JOIN mesh ON                    \
+                    (mesh.mesh_name=member.member_meshname)     \
+                    WHERE mesh.mesh_is_src=true;\" || true"
+                grant_permissions ampmeta sources ampweb
+            fi
+
+            if ! table_exists ampmeta destinations; then
+                su postgres -c "psql -d ampmeta -q -c           \
+                    \"CREATE VIEW destinations AS SELECT        \
+                    member.member_ampname                       \
+                    FROM member JOIN mesh ON                    \
+                    (mesh.mesh_name=member.member_meshname)     \
+                    WHERE mesh.mesh_is_dst=true;\" || true"
+                grant_permissions ampmeta destinations ampweb
+            fi
+        else
+            # install new database from scratch
+            su postgres -c "createdb -O ampweb ampmeta && \
+                zcat /usr/share/amplet2-collector/meta.sql.gz | psql -q -d ampmeta"
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

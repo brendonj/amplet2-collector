@@ -1,3 +1,4 @@
 include collector.conf
 include COPYING
 include doc/*
+include meta.sql
