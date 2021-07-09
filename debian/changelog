@@ -1,3 +1,15 @@
+amplet2-collector (1.2.0-1) unstable; urgency=medium
+
+  * Use systemd to create run and log dirs rather than Debian postinst.
+  * Add destination to external test tags.
+  * Create or update the ampmeta database during installation.
+  * Add Debian dependency on influxdb-client.
+  * Use gzip compression on Debian control files.
+  * Add a systemd dependency on influxdb.
+  * Retry with backoff when writing data fails.
+
+ -- Brendon Jones <brendonj@waikato.ac.nz>  Fri,  9 Jul 2021 15:19:16 +1200
+
 amplet2-collector (1.1.0-1) unstable; urgency=medium
 
   * Fix accessing data fields to deal with missing data.

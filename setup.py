@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='amplet2-collector',
-        version='1.1',
+        version='1.2',
         description='AMP Time Series Collector',
         author='Brendon Jones',
         author_email='brendonj@waikato.ac.nz',
