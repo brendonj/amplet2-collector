@@ -119,9 +119,12 @@ def run(args):
         amqp_channel.start_consuming()
     except SystemExit:
         logger.info("Stopping amplet2 collector")
-        amqp_channel.stop_consuming()
+    except Exception as e:
+        logger.warning(e)
+        raise
 
-    amqp_connection.close()
+    if amqp_connection and amqp_connection.is_open:
+        amqp_connection.close()
 
 
 if __name__ == "__main__":

@@ -1,5 +1,8 @@
 import logging
+import random
+import os
 import time
+import requests
 
 import ampsave
 from ampsave.exceptions import UnknownTestError
@@ -22,11 +25,11 @@ class Processor(object):
         self._dbpass = dbpass
         self._dbname = dbname
         self._db = None
-        self._maximum_backoff = 64
+        self._max_attempts = 8
         self._batch_size = 100
         self._pending = []
         self._count = 0
-        self._connect()
+        self._influxdb_client()
 
     def __del__(self):
         if self._db:
@@ -35,43 +38,37 @@ class Processor(object):
             except AttributeError:
                 pass
 
-    def _connect(self):
-        delay = 1
-        while self._db is None:
-            try:
-                self._logger.debug("Connecting to influxdb %s:%d",
-                                   self._dbhost, self._dbport)
-                self._db = InfluxDBClient(self._dbhost, self._dbport,
-                        self._dbuser, self._dbpass, self._dbname)
-            except ConnectionError as err:
-                self._logger.warning("Failed to connect to influxdb %s:%d: %s",
-                            self._dbhost, self._dbport, err)
-                self._db = None
-                time.sleep(delay)
-                if delay < self._maximum_backoff:
-                    delay = delay * 2
-        self._logger.debug("Connected to influxdb %s:%d",
-                self._dbhost, self._dbport)
+    def _influxdb_client(self):
+        self._db = None
+        self._logger.info("Using influxdb %s:%d", self._dbhost, self._dbport)
+        self._db = InfluxDBClient(
+            host=self._dbhost,
+            port=self._dbport,
+            username=self._dbuser,
+            password=self._dbpass,
+            database=self._dbname)
+            #timeout=30,
+            #retries=6)
 
     def _write(self, points):
         if not points:
             return
 
-        while True:
+        attempt = 0
+        while attempt < self._max_attempts:
+            if attempt > 0:
+                time.sleep((2 ** attempt) + (random.random() * 2))
             try:
                 # XXX try using line protocol (is json default?)
                 if self._db.write_points(points, batch_size=10000,
                                          time_precision="s"):
-                    break
+                    return
                 self._logger.warning("Failed to write to influxdb")
-                self._db = None
-                self._connect()
-            except ConnectionError as err:
-                # XXX which exceptions?
-                self._logger.warning("Lost connection to influxdb %s:%d: %s",
+            except requests.exceptions.ConnectionError as err:
+                self._logger.warning("No connection to influxdb %s:%d: %s",
                             self._dbhost, self._dbport, err)
-                self._db = None
-                self._connect()
+            attempt += 1
+        raise SystemExit(os.EX_UNAVAILABLE)
 
     def process_data(self, channel, method, properties, body):
         # ignore any messages that don't have user_id set
