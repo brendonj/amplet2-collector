@@ -66,12 +66,6 @@ case "$1" in
         if ! rabbitmqctl list_exchanges | \
                 cut -f 1 | grep -qx amp_exchange; then
 
-            # rabbitmqctl doesn't currently have commands for creating anything
-            # useful except users and vhosts. I don't want to have to enable the
-            # management plugin and use rabbitmqadmin just to run a couple of
-            # simple commands, so we will eval them directly and hope the API
-            # doesn't change...
-
             # rabbitmq from 3.7.0 onwards requires an extra parameter to say
             # which user is performing the action, set it to none
             USER=
