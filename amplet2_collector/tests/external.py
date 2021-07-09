@@ -10,6 +10,7 @@ class _External(processor.Processor):
                 "tags": {
                     "test": "external",
                     "source": source,
+                    "destination": datum.get("destination") or source,
                     "command": data["command"],
                 },
                 "time": timestamp,
