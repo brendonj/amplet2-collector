@@ -1,7 +1,7 @@
 [Unit]
 Description=AMP collector
-After=network.target rabbitmq-server.service
-Wants=rabbitmq-server.service
+After=network.target rabbitmq-server.service influxdb.service
+Wants=rabbitmq-server.service influxdb.service
 
 [Service]
 User=ampweb
