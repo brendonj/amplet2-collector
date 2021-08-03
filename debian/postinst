@@ -75,10 +75,10 @@ case "$1" in
 
             # create the exchange "amp_exchange" as direct, durable, extern
             rabbitmqctl eval "rabbit_exchange:declare(rabbit_misc:r(<<\"/\">>, exchange, <<\"amp_exchange\">>), direct, true, false, false, []${USER})." > /dev/null
-            # create the queue "ampqueue" as durable, persistant, no owner
-            rabbitmqctl eval "rabbit_amqqueue:declare(rabbit_misc:r(<<\"/\">>, queue, <<\"ampqueue\">>), true, false, [], none${USER})." > /dev/null
+            # create the queue "ampgrafana" as durable, persistant, no owner
+            rabbitmqctl eval "rabbit_amqqueue:declare(rabbit_misc:r(<<\"/\">>, queue, <<\"ampgrafana\">>), true, false, [], none${USER})." > /dev/null
             # bind the queue to the exchange with routing key "amp"
-            rabbitmqctl eval "rabbit_binding:add({binding, Source = rabbit_misc:r(<<\"/\">>, exchange, <<\"amp_exchange\">>), Key = <<\"amp\">>, Destination = rabbit_misc:r(<<\"/\">>, queue, <<\"ampqueue\">>), Args = []}${USER})." > /dev/null
+            rabbitmqctl eval "rabbit_binding:add({binding, Source = rabbit_misc:r(<<\"/\">>, exchange, <<\"amp_exchange\">>), Key = <<\"amp\">>, Destination = rabbit_misc:r(<<\"/\">>, queue, <<\"ampgrafana\">>), Args = []}${USER})." > /dev/null
 
         fi
 
