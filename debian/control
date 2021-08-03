@@ -12,9 +12,7 @@ Package: amplet2-collector
 Architecture: all
 # TODO figure out how these should interact
 #Conflicts: amplet2-server, nntsc
-# influxdb-client is needed for packages in debian repository, but not for
-# packages coming from the influx repository
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}, influxdb (>= 1.0.2), postgresql, postgresql-client, rabbitmq-server (>= 3.1.5), python3-ampsave, python3-influxdb (>= 2.12.0), python3-daemon, python3-pika, adduser
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}, influxdb (>= 1.0.2), influxdb (>= 1.8.7) | influxdb-client, postgresql, postgresql-client, rabbitmq-server (>= 3.1.5), python3-ampsave, python3-influxdb (>= 2.12.0), python3-daemon, python3-pika, adduser
 Description: Collects and stores network time series data from amplet2-client
  The amplet2-collector stores network time series data in influxdb for
  exploration and display using grafana.
