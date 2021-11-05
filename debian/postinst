@@ -60,11 +60,8 @@ case "$1" in
             fi
         fi
 
-        # If the amp_exchange exists then assume we have already set it up the
-        # way we want it and make no further changes. If it doesn't exist then
-        # set up the exchange, queues, bindings etc
-        if ! rabbitmqctl list_exchanges | \
-                cut -f 1 | grep -qx amp_exchange; then
+        # Create the exchange, queues and bindings only on the first install.
+        if [ -z "$2" ]; then
 
             # rabbitmq from 3.7.0 onwards requires an extra parameter to say
             # which user is performing the action, set it to none
