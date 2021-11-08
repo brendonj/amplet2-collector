@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# TODO make batch size configurable
 
 import argparse
 import logging
@@ -83,8 +82,9 @@ def run(args):
     dbuser = config.get("influxdb", "username", fallback="guest")
     dbpass = config.get("influxdb", "password", fallback="guest")
     dbname = config.get("influxdb", "database", fallback="amp")
+    batch_size = config.getint("influxdb", "batchsize", fallback=1)
 
-    processor = Processor(dbhost, dbport, dbuser, dbpass, dbname)
+    processor = Processor(dbhost, dbport, dbuser, dbpass, dbname, batch_size)
 
     # connect to the message queue
     amqp_user = config.get("rabbitmq", "username", fallback="guest")

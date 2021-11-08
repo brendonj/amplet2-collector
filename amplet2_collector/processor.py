@@ -17,7 +17,7 @@ from . import tests
 
 class Processor(object):
     def __init__(self, dbhost="localhost", dbport=8086, dbuser=None,
-            dbpass=None, dbname="amp"):
+            dbpass=None, dbname="amp", batch_size=1):
         self._logger = logging.getLogger(__name__)
         self._dbhost = dbhost
         self._dbport = dbport
@@ -26,7 +26,7 @@ class Processor(object):
         self._dbname = dbname
         self._db = None
         self._max_attempts = 8
-        self._batch_size = 100
+        self._batch_size = batch_size
         self._pending = []
         self._count = 0
         self._influxdb_client()
