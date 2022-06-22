@@ -24,6 +24,10 @@ class _Throughput(processor.Processor):
                     "runtime": datum["runtime"],
                     "bytes": datum["bytes"],
                     "count": 1 if self._is_valid(datum["bytes"]) else 0,
+                    "retransmits": datum["retransmits"],
+                    "rtt": datum["rtt"],
+                    "rttvar": datum["rttvar"],
+                    "rttmin": datum["rttmin"],
                 }
             })
         return points
