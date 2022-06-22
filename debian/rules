@@ -6,9 +6,6 @@
 %:
 	dh $@ --with systemd,python3 --buildsystem=pybuild
 
-override_dh_compress:
-	dh_compress usr/share/amplet2-collector/meta.sql
-
 override_dh_installinit:
 	dh_installinit --noscripts
 
