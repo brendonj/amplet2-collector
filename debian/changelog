@@ -1,3 +1,12 @@
+amplet2-collector (1.4.0-1) unstable; urgency=medium
+
+  * Update dependencies to work on Debian Bullseye.
+  * Remove postgres dependency and don't configure the database.
+  * Only configure rabbitmq and influxdb on first installation.
+  * Add rtt and retransmit information to throughout test measurements.
+
+ -- Brendon Jones <brendonj@waikato.ac.nz>  Thu, 23 Jun 2022 11:58:21 +1200
+
 amplet2-collector (1.3.0-1) unstable; urgency=medium
 
   * Bump debhelper version to match that listed in the compat file.
