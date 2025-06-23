@@ -27,6 +27,7 @@ jobs:
           - { distro: ubuntu, codename: bionic }
           - { distro: ubuntu, codename: focal }
           - { distro: ubuntu, codename: jammy }
+          - { distro: ubuntu, codename: noble }
 
     steps:
       - name: Checkout repo
