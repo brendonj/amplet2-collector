@@ -1,3 +1,10 @@
+amplet2-collector (1.4.0-3) unstable; urgency=medium
+
+  * Build packages for Ubuntu Noble.
+  * No longer build packages for Ubuntu Bionic or Debian Stretch.
+
+ -- Brendon Jones <brendon.jones@gmail.com>  Fri,  4 Jul 2025 21:41:31 +1200
+
 amplet2-collector (1.4.0-2) unstable; urgency=medium
 
   * Build packages for Debian Bookworm and Ubuntu Jammy.
